@@ -53,9 +53,9 @@ const flattenResults = (results) => {
     });
 }
 
-const toCSV = (pages, folder) => {
+const toCSV = (pages, folder, fileprefix) => {
     fs.mkdirSync(folder, { recursive: true })
-    const filename = path.join(folder, new Date().toLocaleDateString('en-CA') + '.csv');
+    const filename = path.join(folder, fileprefix + '-' + new Date().toLocaleDateString('en-CA') + '.csv');
     const f = flattenResults(pages);
     const stringifier = stringify({ header: true, columns: Object.keys(f[0]) });
     const writableStream = fs.createWriteStream(filename);
@@ -64,10 +64,10 @@ const toCSV = (pages, folder) => {
     console.log(`Wrote ${filename}`)
 }
 
-export const processPages = (dir) => {
+export const processPages = (dir, folder='results', fileprefix='') => {
     const pages = fs.readdirSync(dir).map(file => {
         const data = fs.readFileSync(path.join(dir, file), 'utf8');
         return parsePageJson(JSON.parse(data));
     });
-    toCSV(pages, 'results');
+    toCSV(pages, folder, fileprefix);
 }
